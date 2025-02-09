@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "args": ["--file", "${workspaceFolder}/Resources/maps/flow-one-a.txt"],
+            "cwd": "${workspaceFolder:lem-in}",
+            "name": "Debug lem-in",
+            "program": "${workspaceFolder:lem-in}/.build/debug/lem-in",
+            "preLaunchTask": "swift: Build Debug lem-in",
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:lem-in}",
+            "name": "Release lem-in",
+            "program": "${workspaceFolder:lem-in}/.build/release/lem-in",
+            "preLaunchTask": "swift: Build Release lem-in"
+        }
+    ]
+}
