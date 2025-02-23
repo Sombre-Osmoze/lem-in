@@ -1,6 +1,6 @@
 import Foundation
 
-struct Room {
+struct Room: Hashable {
     typealias ID = String
 
     let id: ID

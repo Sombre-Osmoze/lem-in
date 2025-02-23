@@ -1,11 +1,8 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
-
 import ArgumentParser
 import Foundation
 import Logging
 
-let logger = Logger(label: "lem-in")
+nonisolated(unsafe) var logger = Logger(label: "lem-in")
 
 @main
 struct Lemin: ParsableCommand {
@@ -19,6 +16,7 @@ struct Lemin: ParsableCommand {
     }
 
     mutating func run() throws {
+        logger.logLevel = .debug
 
         if let file = file {  // If file is provided
             guard let data = FileManager.default.contents(atPath: file) else {
@@ -31,7 +29,7 @@ struct Lemin: ParsableCommand {
                 throw Error.invalidText
             }
 
-            parsing(text)
+            try parsing(text)
 
         } else {
             // Fall back to standard input
@@ -44,7 +42,7 @@ struct Lemin: ParsableCommand {
                 logger.error("Error decoding standard input")
                 throw Error.invalidText
             }
-            parsing(text)
+            try parsing(text)
         }
     }
 }
