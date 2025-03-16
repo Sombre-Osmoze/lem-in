@@ -13,6 +13,7 @@ struct Lemin: ParsableCommand {
     enum Error: Swift.Error {
         case invalidFile
         case invalidText
+
     }
 
     mutating func run() throws {

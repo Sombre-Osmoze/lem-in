@@ -7,7 +7,6 @@ enum ParsingError: Error {
 }
 
 func parsing(_ text: String) throws -> Map {
-
     /// TODO: File verification
 
     let lines = text.split(separator: "\n")
@@ -37,12 +36,12 @@ func parsing(_ text: String) throws -> Map {
 
         case let roomData where roomData.count { $0 == " " } == 2:
             let room = Room(from: roomData)
-            logger.debug("room parsed(line: \(index + 1): \(room.id)")
+            logger.debug("room parsed(line: \(index + 1)): \(room.id)")
             rooms.insert(room)
 
-            if let startMakerIndex, index == startMakerIndex - 1 {
+            if let startMakerIndex, index == startMakerIndex + 1 {
                 startRoom = room
-            } else if let endMakerIndex, index == endMakerIndex - 1 {
+            } else if let endMakerIndex, index == endMakerIndex + 1 {
                 endRoom = room
             }
         case let tubeData where tubeData.count { $0 == "-" } == 1:
@@ -61,6 +60,9 @@ func parsing(_ text: String) throws -> Map {
         logger.error("no end room")
         throw ParsingError.noEndRoom
     }
+
+    logger.debug("start room: \(startRoom.id)")
+    logger.debug("end room: \(endRoom.id)")
 
     return .init(rooms: rooms, start: startRoom, end: endRoom)
 }
