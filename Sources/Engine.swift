@@ -1,11 +1,11 @@
-///
-///
-///
+/// Engine that run solver and proceed to display the move informations.
+import Logging
 
 class Engine {
 	let map: Map
 	let ants: Set<Ant>
 	let solver: any Solver
+	let logger = Logger(label: "engine")
 
 	enum SolvingError: Error {
 		case unSolvable
@@ -29,8 +29,9 @@ class Engine {
 		renderer.configure()
 
 		// Resolve paths
-		try solver.resolve()
+		let paths = try solver.resolve()
 
+		logger.info("found valid path: \(paths.count)")
 	}
 
 }
