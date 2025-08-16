@@ -6,7 +6,7 @@ enum ParsingError: Error {
 
 }
 
-func parsing(_ text: String) throws -> Map {
+func parsing(_ text: String) throws -> (map: Map, ants: Int) {
     /// TODO: File verification
 
     let lines = text.split(separator: "\n")
@@ -14,11 +14,13 @@ func parsing(_ text: String) throws -> Map {
     let antsCount = Int(lines.first!)!
     logger.info("Ants count: \(antsCount)")
 
-    var rooms = Set<Room>()
     var startMakerIndex: Int? = nil
     var endMakerIndex: Int? = nil
-    var startRoom: Room? = nil
-    var endRoom: Room? = nil
+    var startRoomID: Room.ID? = nil
+    var endRoomID: Room.ID? = nil
+
+    var linkData: [(from: Room.ID, to: Room.ID)] = []
+    var roomData: [(id: Room.ID, coordinates: Room.Coordinates)] = []
 
     for (index, line) in lines.dropFirst().enumerated() {
 
@@ -34,35 +36,40 @@ func parsing(_ text: String) throws -> Map {
             print(comment)
             continue
 
-        case let roomData where roomData.count { $0 == " " } == 2:
-            let room = Room(from: roomData)
-            logger.debug("room parsed(line: \(index + 1)): \(room.id)")
-            rooms.insert(room)
+        case let roomText where roomText.count { $0 == " " } == 2:
 
+            let parts = roomText.split(separator: " ")
+            let roomId = String(parts[0])
+            let coordinates = SIMD2(x: Int(parts[1])!, y: Int(parts[2])!)
+            roomData.append((id: roomId, coordinates: coordinates))
             if let startMakerIndex, index == startMakerIndex + 1 {
-                startRoom = room
+                startRoomID = roomId
             } else if let endMakerIndex, index == endMakerIndex + 1 {
-                endRoom = room
+                endRoomID = roomId
             }
-        case let tubeData where tubeData.count { $0 == "-" } == 1:
-            continue
+        case let tubeText where tubeText.count { $0 == "-" } == 1:
+            let parts = tubeText.split(separator: "-")
+            linkData.append((from: String(parts[0]), to: String(parts[1])))
         default:
             logger.error("incorrect line: \(line)")
             throw ParsingError.incorrectLine
         }
     }
 
-    guard let startRoom else {
-        logger.error("no start room")
+    let rooms = roomData.map { data in
+        var tubes: [Room.ID] = []
+        let linkArriving = linkData.filter { (from, to) in to == data.id }.map(\.from)
+        tubes.append(contentsOf: linkArriving)
+        let linkDeparting = linkData.filter { (from, to) in from == data.id }.map(\.to)
+        tubes.append(contentsOf: linkDeparting)
+        return Room(data.id, coordinates: data.coordinates, tubes: tubes)
+    }
+
+    guard let startRoomID, let startRoom = rooms.first(where: { $0.id == startRoomID }) else {
         throw ParsingError.noStartRoom
     }
-    guard let endRoom else {
-        logger.error("no end room")
-        throw ParsingError.noEndRoom
+    guard let endRoomID, let endRoom = rooms.first(where: { $0.id == endRoomID }) else {
+        throw ParsingError.noStartRoom
     }
-
-    logger.debug("start room: \(startRoom.id)")
-    logger.debug("end room: \(endRoom.id)")
-
-    return .init(rooms: rooms, start: startRoom, end: endRoom)
+    return (map: .init(rooms: .init(rooms), start: startRoom, end: endRoom), ants: antsCount)
 }

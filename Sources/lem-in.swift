@@ -17,7 +17,7 @@ struct Lemin: ParsableCommand {
     }
 
     mutating func run() throws {
-        logger.logLevel = .debug
+        logger.logLevel = .info
 
         if let file = file {  // If file is provided
             guard let data = FileManager.default.contents(atPath: file) else {
@@ -30,8 +30,8 @@ struct Lemin: ParsableCommand {
                 throw Error.invalidText
             }
 
-            try parsing(text)
-
+            let (map, antCount) = try parsing(text)
+            try process(map, antCount)
         } else {
             // Fall back to standard input
             let file = FileHandle.standardInput
@@ -43,7 +43,18 @@ struct Lemin: ParsableCommand {
                 logger.error("Error decoding standard input")
                 throw Error.invalidText
             }
-            try parsing(text)
+            let (map, antCount) = try parsing(text)
+            try process(map, antCount)
+        }
+
+        func process(_ map: Map, _ antCount: Int) throws {
+            let ants = Ant.generate(antCount)
+            logger.info("generated \(ants.count) ants")
+
+            let engine = try Engine(map: map, ants: ants)
+            let renderer = RendererText(engine)
+
+            try engine.run(in: renderer)
         }
     }
 }
