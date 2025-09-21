@@ -2,32 +2,41 @@ class BreathFirstSearch: Algorithm {
 
     static func search(in map: Map) throws -> [any Collection<Room.ID>] {
         var visited: Set<Room.ID> = []
-        var unexplored: [Room.ID] = [map.bound.start]
 
-        let possiblesPath: [[Room.ID]] = []
+        var possiblesPath: [[Room.ID]] = [[map.bound.start]]
+        var validsPath: [[Room.ID]] = []
 
-        while !unexplored.isEmpty {
-            let exploring = unexplored.removeFirst()
-            visited.insert(exploring)
+        while !possiblesPath.isEmpty {
+            let exploring = possiblesPath.removeFirst()
+            visited.insert(exploring.last!)
 
-            let next = try map.adjacentsRoom(to: exploring).subtracting(visited)
+            let next = try map.adjacentsRoom(to: exploring.last!).subtracting(visited)
 
-            // TODO: Clear  possible path if current explored room does havve neighbors
-
-            // Verify if one of the room is the target else explore rooms
-            guard next.contains(map.bound.end) else {
-                // Next room pending exploration
-                unexplored.append(contentsOf: next)
+            // If no room to explore further close paths that end with the current explored room
+            guard !next.isEmpty else {
+                possiblesPath.removeAll { path in
+                    path.last == exploring.last
+                }
                 continue
             }
 
-            // TODO: Retreive full path
-            // return [[exploring, map.bound.end]]
+            // Verify if one of the room is the target else explore rooms
+            guard !next.contains(map.bound.end) else {
+                var foundValidPath = [Room.ID](exploring)
+                foundValidPath.append(map.bound.end)
+                validsPath.append(foundValidPath)
+                continue
+            }
+
+            // Next room pending exploration
+            possiblesPath.append(
+                contentsOf: next.map { room in
+                    var newPaths = [Room.ID].init(exploring)
+                    newPaths.append(room)
+                    return newPaths
+                })
         }
 
-        // If nothing left to explore return possible path that contains the target.
-        return possiblesPath.filter { path in
-            path.contains(map.bound.end)
-        }
+        return validsPath
     }
 }
