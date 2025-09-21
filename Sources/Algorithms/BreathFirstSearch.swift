@@ -1,4 +1,5 @@
-class BreathFirstSearch: Algorithm {
+/// Implemtation of BreadthFirstSearch that find all path in a graph
+class BreathFirstSearchAll: Algorithm {
 
     static func search(in map: Map) throws -> [any Collection<Room.ID>] {
         var visited: Set<Room.ID> = []
