@@ -21,9 +21,9 @@ class Map {
         return room
     }
 
-    func adjacentsRoom(to roomID: Room.ID) throws -> [Room] {
+    func adjacentsRoom(to roomID: Room.ID) throws -> Set<Room.ID> {
         let fromRoom = try room(roomID)
 
-        return try fromRoom.tubes.map(self.room(_:))
+        return fromRoom.tubes
     }
 }

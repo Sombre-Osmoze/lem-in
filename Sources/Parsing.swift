@@ -62,7 +62,7 @@ func parsing(_ text: String) throws -> (map: Map, ants: Int) {
         tubes.append(contentsOf: linkArriving)
         let linkDeparting = linkData.filter { (from, to) in from == data.id }.map(\.to)
         tubes.append(contentsOf: linkDeparting)
-        return Room(data.id, coordinates: data.coordinates, tubes: tubes)
+        return Room(data.id, coordinates: data.coordinates, tubes: Set(tubes))
     }
 
     guard let startRoomID, let startRoom = rooms.first(where: { $0.id == startRoomID }) else {
@@ -71,5 +71,6 @@ func parsing(_ text: String) throws -> (map: Map, ants: Int) {
     guard let endRoomID, let endRoom = rooms.first(where: { $0.id == endRoomID }) else {
         throw ParsingError.noStartRoom
     }
+
     return (map: .init(rooms: .init(rooms), start: startRoom, end: endRoom), ants: antsCount)
 }
