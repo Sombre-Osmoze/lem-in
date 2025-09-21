@@ -20,6 +20,8 @@ class SolverSingle: Solver {
 			rhs.count > lhs.count
 		}
 
+		dump(paths, name: "found paths")
+
 		guard let shortest else { throw ResolvingError.noPath }
 
 		path = shortest

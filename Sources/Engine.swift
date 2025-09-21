@@ -31,7 +31,7 @@ class Engine {
 		// Resolve paths
 		let paths = try solver.resolve()
 
-		logger.info("found valid path: \(paths.count)")
+		logger.info("solving with valids \(paths.count) paths")
 		dump(paths, name: "paths")
 
 	}

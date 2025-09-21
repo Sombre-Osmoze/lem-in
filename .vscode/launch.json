@@ -5,7 +5,7 @@
             "request": "launch",
             "args": [
                 "--file",
-                "${workspaceFolder}/Resources/maps/simple-1ant.map"
+                "${workspaceFolder}/Resources/maps/classic.map"
             ],
             "cwd": "${workspaceFolder:lem-in}",
             "name": "Debug lem-in",
