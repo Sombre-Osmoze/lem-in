@@ -10,37 +10,21 @@ class SolverSingle: Solver {
 		self.map = map
 	}
 
+	var path: (any Path)? = nil
+
 	func resolve() throws -> [any Collection<Room.ID>] {
+		// For one ant we use BreadthFirst Search to find the shortest path
+		let paths: [any Collection<Room.ID>] = try BreathFirstSearch.search(in: map)
 
-		let currentPossiblePath: [[Room.ID]]
-
-		let startRoom = try map.room(map.bound.start)
-
-		guard !startRoom.tubes.isEmpty else { throw ResolvingError.noPath }
-
-		var pending: [Room.ID] = [startRoom.id]
-		var visited: Set<Room.ID> = []
-
-		while !pending.isEmpty {
-			let exploring = pending.removeFirst()
-			visited.insert(exploring)
-			let nextRoomsToLook = try map.adjacentsRoom(to: exploring).subtracting(visited)
-
-			// TODO: Clear
-
-			dump(nextRoomsToLook, name: "next")
-			// Verify if one of the room is the target else explore rooms
-			guard nextRoomsToLook.contains(map.bound.end) else {
-				// Next room pending exploration
-				pending.append(contentsOf: nextRoomsToLook)
-				continue
-			}
-
-			// TODO: Retreive full path
-			return [[exploring, map.bound.end]]
+		let shortest = paths.min { rhs, lhs in
+			rhs.count > lhs.count
 		}
 
-		return []
+		guard let shortest else { throw ResolvingError.noPath }
+
+		path = shortest
+
+		return [shortest]
 	}
 
 }
