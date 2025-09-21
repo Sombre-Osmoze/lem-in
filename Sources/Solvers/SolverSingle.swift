@@ -14,7 +14,7 @@ class SolverSingle: Solver {
 
 	func resolve() throws -> [any Collection<Room.ID>] {
 		// For one ant we use BreadthFirst Search to find the shortest path
-		let paths: [any Collection<Room.ID>] = try BreathFirstSearch.search(in: map)
+		let paths: [any Collection<Room.ID>] = try BreathFirstSearchAll.search(in: map)
 
 		let shortest = paths.min { rhs, lhs in
 			rhs.count > lhs.count
