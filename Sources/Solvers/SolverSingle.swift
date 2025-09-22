@@ -17,7 +17,7 @@ class SolverSingle: Solver {
 		let paths: [any Collection<Room.ID>] = try BreathFirstSearchAll.search(in: map)
 
 		let shortest = paths.min { rhs, lhs in
-			rhs.count > lhs.count
+			rhs.count < lhs.count
 		}
 
 		dump(paths, name: "found paths")

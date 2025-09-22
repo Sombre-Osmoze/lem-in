@@ -5,7 +5,7 @@
             "request": "launch",
             "args": [
                 "--file",
-                "${workspaceFolder}/Resources/maps/classic.map"
+                "${workspaceFolder}/Resources/maps/flow-one-a.map"
             ],
             "cwd": "${workspaceFolder:lem-in}",
             "name": "Debug lem-in",
